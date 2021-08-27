@@ -3,7 +3,7 @@
 let x = document.querySelector('.x');
 let o = document.querySelector('.o');
 let boxes = document.querySelectorAll('.box');
-let buttons = document.querySelector('#buttons-container button');
+let buttons = document.querySelectorAll('#buttons-container button');
 let messageContainer = document.getElementById('message');
 let messageText = document.querySelector('#message p');
 let secondPlayer;
@@ -27,16 +27,32 @@ for (let i = 0; i < boxes.length; i++) {
             this.appendChild(cloneEl);
 
             // computar a jogada
-
             if (player01 == player02) {
                 player01++;
+                if (secondPlayer == 'ia-player') {
+                    player02++
+                }
             } else {
-                player02++
+                player02++;
             }
 
             checkWinCondition();
         }
+    })
+}
 
+
+// event for know if is 2 players or IA
+for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function () {
+        secondPlayer = this.getAttribute('id');
+        for (let j = 0; j < buttons.length; j++) {
+            buttons[j].style.display = 'none';
+        }
+        setTimeout(function () {
+            let container = document.getElementById('container')
+            container.classList.remove('hide');
+        }, 500)
     })
 }
 
@@ -62,35 +78,82 @@ function checkWinCondition() {
     let b8 = document.getElementById('block-8');
     let b9 = document.getElementById('block-9');
 
-    /* const horizontal = win['horizontal'];
-    horizontal(b1, b2, b3); */
+    const winner = verifyWin['winner'];
+    // horizontal
+    winner(b1, b2, b3);
+    winner(b4, b5, b6);
+    winner(b7, b8, b9);
 
-    if (b1.childNodes.length > 0 && b2.childNodes.length > 0 && b3.childNodes.length > 0) {
-        let b1child = b1.childNodes[0].className;
-        let b2child = b2.childNodes[0].className;
-        let b3child = b3.childNodes[0].className;
+    // vertical
+    winner(b1, b4, b7);
+    winner(b2, b5, b8);
+    winner(b3, b6, b9);
 
-        if (b1child == 'x' && b2child == 'x' && b3child == 'x') {
-            console.log('x venceu');
+    // diagonal
+    winner(b1, b5, b9);
+    winner(b3, b5, b7);
 
-        } else if (b1child == 'o' && b2child == 'o' && b3child == 'o') {
-            console.log('o venceu');
+    // given hash
+    verifyWin.hash(boxes);
+}
+
+const verifyWin = {
+    winner: (box1, box2, box3) => {
+
+        if (box1.childNodes.length > 0 && box2.childNodes.length > 0 && box3.childNodes.length > 0) {
+            let box1child = box1.childNodes[0].className;
+            let box2child = box2.childNodes[0].className;
+            let box3child = box3.childNodes[0].className;
+            if (box1child == 'x' && box2child == 'x' && box3child == 'x') {
+                verifyWin.declareWinner('x');
+            } else if (box1child == 'o' && box2child == 'o' && box3child == 'o') {
+                verifyWin.declareWinner('o');
+            }
         }
+    },
+    hash: (boxes) => {
+        let counter = 0;
+        for (let i = 0; i < boxes.length; i++) {
+            if (boxes[i].childNodes[0] != undefined) {
+                counter++;
+            }
+        }
+        if (counter == 9) {
+            verifyWin.declareWinner('deu velha')
+        }
+    },
+    declareWinner: (winner) => {
+        let scoreboardX = document.querySelector('#scoreboard-1')
+        let scoreboardO = document.querySelector('#scoreboard-2')
+        let msg = '';
+
+        if (winner == 'x') {
+            scoreboardX.textContent = parseInt(scoreboardX.textContent) + 1;
+            msg = 'O jogador 1 venceu!'
+        } else if (winner == 'o') {
+            scoreboardO.textContent = parseInt(scoreboardO.textContent) + 1;
+            msg = 'O jogador 2 venceu!'
+        } else {
+            msg = 'Deu velha!'
+        }
+
+        messageText.innerHTML = msg;
+        messageContainer.classList.remove('hide');
+        setTimeout(function () {
+            messageContainer.classList.add('hide')
+        }, 3000)
+
+        resetGame();
     }
 }
 
-/* const win = {
-    horizontal: (b1, b2, b3) => {
+function resetGame() {
+    player01 = 0;
+    player02 = 0;
 
-        let b1child = b1.childNodes[0].className;
-        let b2child = b2.childNodes[0].className;
-        let b3child = b3.childNodes[0].className;
+    let boxesToRemove = document.querySelectorAll('.box div');
 
-        if (b1child == 'x' && b2child == 'x' && b3child == 'x') {
-            console.log('x venceu');
-
-        } else if (b1child == 'o' && b2child == 'o' && b3child == 'o') {
-            console.log('o venceu');
-        }
+    for (let i = 0; i < boxesToRemove.length; i++) {
+        boxesToRemove[i].parentNode.removeChild(boxesToRemove[i]);
     }
-} */
+}
