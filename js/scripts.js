@@ -30,6 +30,7 @@ for (let i = 0; i < boxes.length; i++) {
             if (player01 == player02) {
                 player01++;
                 if (secondPlayer == 'ia-player') {
+                    computerPlay();
                     player02++
                 }
             } else {
@@ -156,4 +157,29 @@ function resetGame() {
     for (let i = 0; i < boxesToRemove.length; i++) {
         boxesToRemove[i].parentNode.removeChild(boxesToRemove[i]);
     }
+}
+
+function computerPlay() {
+    let cloneO = o.cloneNode(true);
+    let counter = 0;
+    let filled = 0;
+
+    for (let i = 0; i < boxes.length; i++) {
+        let randomNumber = Math.floor(Math.random() * 5);
+
+        if (boxes[i].childNodes[0] == undefined) {
+            if (randomNumber <= 1) {
+                boxes[i].appendChild(cloneO)
+                counter++;
+                break;
+            }
+        } else {
+            filled++;
+        }
+
+    }
+}
+
+if (counter == 0 && filled < 9) {
+    computerPlay();
 }
