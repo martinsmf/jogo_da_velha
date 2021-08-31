@@ -77,9 +77,9 @@ h1 {
 
 /* classe de esconder */
 
-/* .hide {
+.hide {
     display: none !important;
-} */
+}
 
 /* Placar */
 
@@ -123,5 +123,4 @@ h1 {
     font-size: 50px;
     background-color: black;
     color: white;
-    display: none;
 }
